@@ -11,6 +11,7 @@ const login = async(req, res = response) => {
 
     const { correo, password } = req.body;
 
+    
     try {
       
         // Verificar si el email existe
