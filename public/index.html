@@ -41,15 +41,15 @@
     function handleCredentialResponse(response) {
 
         const body = { id_token: response.credential }
-        fetch('https://curso-node-restserver-0.herokuapp.com//api/auth/google', {
+        fetch('https://curso-node-restserver-0.herokuapp.com/api/auth/google', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
         })
-        .then( r=> r.json() )
-        .then( resp =>{
+        .then( r => r.json() )
+        .then( resp => {
             console.log(resp )
             localStorage.setItem('email', resp.usuario.correo )
         })
