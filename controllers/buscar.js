@@ -6,7 +6,7 @@ const { Usuario, Categoria, Producto } = require('../models');
 
 const coleccionesPermitidas = [
     'usuarios',
-    'categoria',
+    'categorias',
     'productos',
     'role'
 ];
@@ -46,10 +46,62 @@ const buscarCategorias = async( termino = '', res = response ) => {
 
     const esMongoID = ObjectId.isValid( termino );
 
+    if( esMongoID ) {
+
+        const categoria = await Categoria.findById( termino );
+
+        return res.json({
+            results: (categoria) ? [ categoria ] : []
+        });
+
+    }
+
+    const regex = new RegExp( termino, 'i' );
+
+
+    const categorias = await Categoria.find({ 
+         nombre: regex, estado: true 
+    
+    });
+
+
+    res.json({
+        results: categorias
+    });
 
 
 }
 
+
+
+const buscarProductos = async( termino = '', res = response ) => {
+
+    const esMongoID = ObjectId.isValid( termino );
+
+    if( esMongoID ) {
+
+        const producto = await Producto.findById( termino )
+                            .populate('categoria', 'nombre');
+
+        return res.json({
+            results: ( producto ) ? [ producto ] : []
+        });
+
+    }
+
+    const regex = new RegExp( termino, 'i' );
+
+
+    const productos = await Producto.find({ nombre: regex, estado: true })
+                                .populate('categoria', 'nombre');
+
+
+    res.json({
+        results: productos
+    });
+
+
+}
 
 
 
@@ -65,15 +117,16 @@ const buscar = ( req, res = response ) => {
 
     
     switch ( coleccion ) {
-        case 'usuarios': buscarUsuarios
-            buscarUsuarios(termino, res);
+        case 'usuarios':
+            buscarUsuarios( termino, res );
         break;
 
-        case 'categoria': buscarCategorias
-            buscarCategorias(termino, res);
+        case 'categorias':
+            buscarCategorias( termino, res );
         break;
 
         case 'productos':
+            buscarProductos( termino, res );
         break;
 
         default:
